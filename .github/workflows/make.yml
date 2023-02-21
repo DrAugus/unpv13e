@@ -1,0 +1,59 @@
+name: ci-make
+
+on:
+  push:
+    branches: [ master ]
+    paths-ignore:
+      - '.gitignore'
+      - 'LICENSE'
+      - '**.md'
+  pull_request:
+    branches: [ master ]
+    paths-ignore:
+      - '.gitignore'
+      - 'LICENSE'
+      - '**.md'
+
+#env:
+#  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+#  BUILD_TYPE: Release
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+         - os: ubuntu-latest
+           type: Debug
+           cxx: gcc
+         - os: ubuntu-latest
+           type: Release
+           cxx: gcc
+           coverage: -DCMAKE_CXX_FLAGS=--coverage
+         - os: ubuntu-latest
+           type: Debug
+           cxx: clang
+         - os: ubuntu-latest
+           type: Release
+           cxx: clang
+         - os: macos-latest
+           type: Debug
+         - os: macos-latest
+           type: Release
+
+    # The CMake configure and build commands are platform agnostic and should work equally well on Windows or Mac.
+    # You can convert this to a matrix build if you need cross-platform coverage.
+    # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+    runs-on: ${{matrix.os}}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      # - name: Checkout submodules
+      #   run: |
+      #     cd ${{github.workspace}}/
+      #     git submodule update --init --recursive
+
+
+      - name: Configure and make
+        run: ./make.sh

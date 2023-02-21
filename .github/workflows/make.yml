@@ -56,4 +56,4 @@ jobs:
 
 
       - name: Configure and make
-        run: ./make.sh
+        run: chmod +x make.sh && ./make.sh
